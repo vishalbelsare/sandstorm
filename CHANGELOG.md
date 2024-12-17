@@ -1,3 +1,60 @@
+### v0.308 (2023-08-06)
+- Added Russian-language localization. (Thanks @troyjfarrell.)
+- Fixed broken links to the app market. (Thanks @zenhack. RIP.)
+
+### v0.307 (2023-02-05)
+- The signing key for the Wordpress app has been rolled to transfer maintainership to @ocdtrekkie, since the previous maintainers had not updated it in many years. @ocdtrekkie has been a core Sandstorm project member for several years and plans to push an update to this app.
+- install.sh has been updated to no longer fail if there hasn't been a new release in the last 30 days. Future releases will be on an as-needed basis instead of monthly.
+
+### v0.306 (2023-01-11)
+- Fixed bug where app updates could not be turned off in the admin panel. (Thanks @zenhack.)
+- Clarified error log message when receiving email to an unknown address. (Thanks @jdougan.)
+
+### v0.305 (2022-12-12)
+- Rolled back Cap'n Proto update due to some reports of broken apps.
+
+### v0.304 (2022-12-10)
+- Cap'n Proto has had several internal optimizations. We don't expect a significant impact on Sandstorm but let us know if there's any fishy behavior changes.
+
+### v0.303 (2022-11-12) [bugfixes]
+- The experimental new (not on by default) seccomp filter has been updated to support many more apps. (Thanks @zenhack.)
+
+### v0.302 (2022-10-12) [bugfixes]
+- Updated dependencies. (No other changes.)
+
+### v0.301 (2022-09-10) [bugfixes]
+- Updated dependencies. (No other changes.)
+
+### v0.300 (2022-08-14)
+- Package downloads will no longer buffer in memory as they are being unpacked. (Thanks @zenhack.)
+- Updated outdated "G Suite" and "Google Apps for Work" to Google's latest rebrand, "Google Workspace". No doubt these will all be outdated again in another month. (Thanks @ocdtrekkie.)
+- Offer token iframes can now specify the foreground color. (Thanks @zenhack.)
+- In `ALLOW_LEGACY_RELAXED_CSP=false` mode, we now ask the browser to block WebRTC, using a new CSP standard that browsers don't support yet. (Thanks @zenhack.)
+
+### v0.299 (2022-07-09) [bugfixes]
+- Updated dependencies. (No other changes.)
+
+### v0.298 (2022-06-11)
+- Removed old team photos and Indiegogo contributors from /about page. It's been 8 years since the campaign and 5 years since the team disbanded so this page was feeling pretty awkward. (Thanks @ocdtrekkie.)
+
+### v0.297 (2022-05-13) [bugfixes]
+- Updated dependencies. (No other changes.)
+
+### v0.296 (2022-04-10) [bugfixes]
+- Fixed "Operation not permitted" error when running without root privileges on newer kernels. Most people install Sandstorm as root, but for those that don't, a "security fix" in kernel 5.12 which was backported to some older kernels broke Sandstorm. (Thanks @zenhack.)
+
+### v0.295 (2022-03-13) [bugfixes]
+- Updated dependencies. (No other changes.)
+
+### v0.294 (2022-02-12) [bugfixes]
+- Updated dependencies. (No other changes.)
+
+### v0.293 (2022-01-16) [bugfixes]
+- Updated dependencies. (No other changes.)
+
+### v0.292 (2021-12-19)
+- Increased size of close-grain button on mobile. (Thanks @zenhack.)
+
 ### v0.291 (2021-11-21)
 - Added a backup button to the grain list, so you don't have to open the grain before downloading a backup. (Thanks @zenhack.)
 - Updated icon font generator to modern code (it had been stuck on an old version for a while). Please report if any icons look wrong. (Thanks @griff.)

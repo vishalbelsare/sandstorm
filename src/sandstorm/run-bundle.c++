@@ -1139,7 +1139,7 @@ public:
           bundleDir(main.getInstallDir()),
           sandstormHome(kj::str(bundleDir.slice(0, KJ_ASSERT_NONNULL(bundleDir.findLast('/'))))),
           cap(network.parseAddress(
-                kj::str("unix:", sandstormHome, "/var/sandstorm/socket/shell-cli"))
+                kj::str("unix:", sandstormHome, "/", ShellCli::SOCKET_PATH))
               .then([this](kj::Own<kj::NetworkAddress> addr) {
             auto promise = addr->connect();
             return promise.attach(kj::mv(addr))
@@ -1396,6 +1396,13 @@ private:
     }
   }
 
+  void idMapUidNamespace(uid_t uid, gid_t gid) {
+    // Identity-map the given uid & gid in the current uid namespace.
+    writeSetgroupsIfPresent("deny\n");
+    writeUserNSMap("uid", kj::str(uid, " ", uid, " 1\n"));
+    writeUserNSMap("gid", kj::str(gid, " ", gid, " 1\n"));
+  }
+
   void unshareUidNamespaceOnce() {
     if (!unsharedUidNamespace) {
       uid_t uid = getuid();
@@ -1403,16 +1410,7 @@ private:
 
       KJ_SYSCALL(unshare(CLONE_NEWUSER));
 
-      // Set up the UID namespace. We map ourselves as UID zero because this allows capabilities
-      // to be inherited through exec(), which we need to support update and restart. With any
-      // other UID, capabilities can only be inherited through exec() if the target exec'd file
-      // has its inheritable capabilities set filled. By default, the inheritable capability set
-      // for all files is empty, and only the filesystem's superuser (i.e. not us) can change them.
-      // But if our UID is zero, then the file's attributes are ignored and all capabilities are
-      // inherited.
-      writeSetgroupsIfPresent("deny\n");
-      writeUserNSMap("uid", kj::str("0 ", uid, " 1\n"));
-      writeUserNSMap("gid", kj::str("0 ", gid, " 1\n"));
+      idMapUidNamespace(uid, gid);
 
       unsharedUidNamespace = true;
     }
@@ -1951,10 +1949,23 @@ private:
 
     pid_t updaterPid = startUpdater(config, fdBundle, false);
 
-    pid_t sandstormPid = fork();
-    if (sandstormPid == 0) {
-      runServerMonitor(config, fdBundle);
-      KJ_UNREACHABLE;
+    // Start the server monitor.
+    pid_t sandstormPid;
+    {
+      int cloneFlags = SIGCHLD;
+      if (!runningAsRoot) {
+        cloneFlags |= CLONE_NEWUSER | CLONE_NEWPID;
+        unsharedUidNamespace = true;
+      }
+
+      uid_t uid = getuid();
+      gid_t gid = getgid();
+
+      KJ_SYSCALL(sandstormPid = syscall(SYS_clone, cloneFlags, nullptr, nullptr, 0));
+      if (sandstormPid == 0) {
+        runServerMonitor(config, fdBundle, uid, gid);
+        KJ_UNREACHABLE;
+      }
     }
 
     for (;;) {
@@ -2019,10 +2030,18 @@ private:
     }
   }
 
-  [[noreturn]] void runServerMonitor(const Config& config, FdBundle& fdBundle) {
+  [[noreturn]] void runServerMonitor(const Config& config, FdBundle& fdBundle,
+                                     uid_t uid, gid_t gid) {
     // Run the server monitor, which runs node and mongo and deals with them dying.
+    // The uid and gid should be the uid and gid for the parent process in its own
+    // user namespace (if user namespaces are in use).
 
     setProcessName("montr", "(server monitor)");
+
+    if(!runningAsRoot) {
+      // We were cloned into a new user namespace, so we need to set up a mapping:
+      idMapUidNamespace(uid, gid);
+    }
 
     enterChroot(config.uids, true);
 
@@ -2395,8 +2414,8 @@ private:
       // Listen for connections on the shell CLI socket and forward them to the shell. We do this
       // in the backend, rather than in the shell itself, mainly because node-capnp lacks support
       // for creating listen sockets.
-      unlink("/var/sandstorm/socket/shell-cli");
-      auto shellCliListener = network.parseAddress("unix:/var/sandstorm/socket/shell-cli")
+      unlink(kj::str("/", ShellCli::SOCKET_PATH).cStr());
+      auto shellCliListener = network.parseAddress(kj::str("unix:/", ShellCli::SOCKET_PATH))
           .wait(io.waitScope)->listen();
       auto shellCliServer = kj::heap<capnp::TwoPartyServer>(kj::refcounted<CapRedirector>([&]() {
         return server.getBootstrap().castAs<SandstormCoreFactory>()
@@ -2463,15 +2482,15 @@ private:
           headerTableBuilder.getFutureTable(), shellHttpAddr, clientSettings);
 
       GatewayService::Tables gatewayTables(headerTableBuilder);
+      kj::HttpHeaderId hXRealIp = headerTableBuilder.add("X-Real-Ip");
+      auto headerTable = headerTableBuilder.build();
+
       GatewayService service(io.provider->getTimer(), *shellHttp, kj::cp(router),
                              gatewayTables, config.rootUrl, config.wildcardHost,
                              config.termsPublicId.map(
                                  [](const kj::String& str) -> kj::StringPtr { return str; }),
                              config.allowLegacyRelaxedCSP);
 
-      kj::HttpHeaderId hXRealIp = headerTableBuilder.add("X-Real-Ip");
-
-      auto headerTable = headerTableBuilder.build();
       kj::HttpServer server(io.provider->getTimer(), *headerTable, [&](kj::AsyncIoStream& conn) {
         return kj::heap<RealIpService>(service, hXRealIp, conn);
       });
@@ -2656,6 +2675,10 @@ private:
         config.stripeKey.map([](const kj::String& sk) {
           return kj::str(", \"stripeKey\":\"", sk, "\"");
         }).orDefault(kj::String(nullptr)),
+
+        // See: https://github.com/meteor/meteor/issues/11666
+        ", \"packages\": { \"mongo\": { \"reCreateIndexOnOptionMismatch\": true }}"
+
         "}");
   }
 

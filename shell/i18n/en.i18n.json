@@ -119,26 +119,6 @@
       "changelog": {
         "title": "Recent changes"
       },
-      "developers": {
-        "title": "Core developers"
-      },
-      "advisors": {
-        "title": "Advisors"
-      },
-      "corporate": {
-        "title": "Corporate sponsors",
-        "explanation": "These companies contributed heavily to Sandstorm's <a href=\"http://igg.me/at/sandstorm\">crowdfunding campaign</a>."
-      },
-      "individual": {
-        "title": "Key individual sponsors",
-        "explanation": "These individuals contributed heavily to Sandstorm's <a href=\"http://igg.me/at/sandstorm\">crowdfunding campaign</a>."
-      },
-      "backers": {
-        "title": "Backers",
-        "explanation": "from <a href=\"http://igg.me/at/sandstorm\">our Indiegogo campaign &gt;</a>",
-        "anonymous": "and %s anonymous contributors",
-        "loading": "loading..."
-      },
       "dependencies": {
         "title": "Third-party works used",
         "license": "license",
@@ -146,8 +126,7 @@
       },
       "copyright": {
         "title": "Copyright",
-        "license": "The Sandstorm implementation is copyright by Sandstorm Development Group, Inc. and contributors. The implementation is licensed under the Apache License 2.0.",
-        "trademark": "\"Sandstorm\" and the Sandstorm logo are trademarks of Sandstorm Development Group, Inc., and may not be used to advertise derivative works nor commercial services without written consent from Sandstorm Development Group, Inc."
+        "license": "The Sandstorm implementation is copyright by Sandstorm contributors. The implementation is licensed under the Apache License 2.0."
       },
       "terms": {
         "license": "License",
@@ -198,9 +177,16 @@
       "was": "was: %s",
       "renamedFrom": "renamed from: %s"
     },
+    "grainTitlePopup": {
+      "prompt": "Set new title:",
+      "promptNotOwner": "Set a new personal title: (does not change the owner's title for this grain)"
+    },
     "grainDeleteButton": {
       "hint": "Move to trash",
       "text": "Move to trash"
+    },
+    "grainDeletePopup": {
+      "confirmationMessage": "Really move this grain to your trash?"
     },
     "grainDebugLogButton": {
       "hint": "Show Debug Log",
@@ -234,7 +220,7 @@
     },
     "grainSettingsButton": {
       "hint": "Grain Settings",
-      "text": "settings"
+      "text": "Settings"
     },
     "grainApiTokenButton": {
       "hint": "Get webkey",
@@ -319,7 +305,7 @@
       "whoHasAccess": "See who has access"
     },
     "grainSharePopup": {
-      "oldSharingModelDescription": "This grain uses the old sharing model. You can share it by copy/pasting the URL from the location bar",
+      "oldSharingModelDescription": "This grain uses the old sharing model. You can share it by copy/pasting the URL from the location bar.",
       "upgradeDescription": "You can upgrade this grain to the new model, but anyone with whom you shared this grain previously will lose access; you will have to share with them again.",
       "upgradeWarning": "Upgrading cannot be undone.",
       "upgrade": "upgrade",
@@ -777,12 +763,12 @@
             "subtext": "Users with an email address at this domain will be members of this server's organization."
           },
           "gappsToggle": {
-            "label": "Users authenticated via Google Apps for Work",
+            "label": "Users authenticated via Google Workspace",
             "subtext": "Note: disabled because Google login is not configured."
           },
           "gappsDomain": {
             "label": "Domain:",
-            "subtext": "Users with a Google Apps for Work account under this domain will be members of this server's organization."
+            "subtext": "Users with a Google Workspace account under this domain will be members of this server's organization."
           },
           "ldapToggle": {
             "label": "Users authenticated via LDAP",
@@ -1757,12 +1743,12 @@
           "subtext": "Users with an email address at this domain will be members of this server's organization."
         },
         "gappsToggle": {
-          "label": "Users authenticated via Google Apps for Work",
+          "label": "Users authenticated via Google Workspace",
           "subtext": "Note: disabled because Google login is not configured."
         },
         "gappsDomain": {
           "label": "Domain:",
-          "subtext": "Users with a Google Apps for Work account under this domain will be members of this server's organization."
+          "subtext": "Users with a Google Workspace account under this domain will be members of this server's organization."
         },
         "ldapToggle": {
           "label": "Users authenticated via LDAP",

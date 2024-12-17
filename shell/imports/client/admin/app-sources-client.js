@@ -2,7 +2,7 @@ import { Meteor } from "meteor/meteor";
 import { Template } from "meteor/templating";
 import { ReactiveVar } from "meteor/reactive-var";
 
-import { globalDb } from "/imports/db-deprecated.js";
+import { globalDb } from "/imports/db-deprecated";
 
 const DEFAULT_APP_MARKET_URL = "https://apps.sandstorm.io";
 const DEFAULT_APP_UPDATES_ENABLED = true;
@@ -117,7 +117,7 @@ Template.newAdminAppSources.events({
               message: err.message,
             });
           } else {
-            Meteor.call("setSetting", undefined, "enableAppUpdates", newEnableAppUpdates, (err) => {
+            Meteor.call("setSetting", undefined, "appUpdatesEnabled", newEnableAppUpdates, (err) => {
               if (err) {
                 instance.formState.set({
                   state: "error",

@@ -88,8 +88,8 @@ fail() {
     if USE_DEFAULTS=no prompt-yesno "Hmm, installation failed. Would it be OK to send an anonymous error report to the sandstorm.io team so we know something is wrong?
 It would only contain this error code: $error_code" "yes" ; then
       echo "Sending problem report..." >&2
-      local BEARER_TOKEN="ZiV1jbwHBPfpIjF3LNFv9-glp53F7KcsvVvljgKxQAL"
-      local API_ENDPOINT="https://api.oasis.sandstorm.io/api"
+      local BEARER_TOKEN="4-Og3Ty2SPmpkZGnVc_8hnBGXK0JBBXDeBn_55FWixJ"
+      local API_ENDPOINT="https://alpha-api-df09d5faefd551337b59659de8ae7207.sandstorm.io"
       local HTTP_STATUS=$(
         dotdotdot_curl \
           --silent \
@@ -1381,14 +1381,36 @@ __EOF__
       fail "E_BAD_PACKAGE" "Bad package -- did not contain $BUILD_DIR directory."
     fi
 
-    if [ ! -e "$BUILD_DIR/buildstamp" ] || \
-       [ $(stat -c %Y "$BUILD_DIR/buildstamp") -lt $(( $(date +%s) - 30*24*60*60 )) ]; then
-      rm -rf "$BUILD_DIR"
-      fail "E_PKG_STALE" "The downloaded package seems to be more than a month old. Please verify that your" \
-           "computer's clock is correct and try again. It could also be that an attacker is" \
-           "trying to trick you into installing an old version. Please contact" \
-           "security@sandstorm.io if the problem persists."
-    fi
+    # We used to reject packages older than 30 days on the assumption the package would definitely
+    # be updated more often than that. For about six years the existence of this check was the main
+    # thing that drove me (Kenton) to do a release every month, although I occasionally forgot which
+    # would temporarily block new installs. Surprisingly (to me, at least), whenever this happend,
+    # people would actually notice and complain within a day or two -- people were apparently
+    # still installing Sandstorm regularly.
+    #
+    # As of Feb 2023, though, I think it's time to retire this check and end the monthly update
+    # schedule, for several reasons:
+    # - In 2022, the majority of months saw no actual changes at all.
+    # - Ian, who had been the most active maintainer, is now focusing his efforts on a new
+    #   implementation called Tempest. So 2023 is likely to see even fewer changes.
+    # - It's no longer possible to update the Meteor dependency, because newer versions of Meteor
+    #   no longer support the ancient version of Mongo we're stuck on (2.6), and writing automation
+    #   to update everyone's Mongo instances automatically without breaking anyone is too large
+    #   a project for anyone to volunteer for. Since almost all of Sandstorm's dependencies stem
+    #   from Meteor, trying to update dependencies on a monthly basis has become futile, as the
+    #   pinned Meteor version holds everything else back.
+    # - I just have too much to do, and although releases are not a whole lot of work, it feels
+    #   like one more thing on the pile.
+    #
+    # I'm still happy to push releases when there are interesting changes.
+#    if [ ! -e "$BUILD_DIR/buildstamp" ] || \
+#       [ $(stat -c %Y "$BUILD_DIR/buildstamp") -lt $(( $(date +%s) - 30*24*60*60 )) ]; then
+#      rm -rf "$BUILD_DIR"
+#      fail "E_PKG_STALE" "The downloaded package seems to be more than a month old. Please verify that your" \
+#           "computer's clock is correct and try again. It could also be that an attacker is" \
+#           "trying to trick you into installing an old version. Please contact" \
+#           "security@sandstorm.io if the problem persists."
+#    fi
   }
 
   if [ -e $BUILD_DIR ]; then
@@ -1670,7 +1692,7 @@ sandcats_provide_help() {
   echo "You can:"
   echo ""
   echo "* Read more about it at:"
-  echo "  https://github.com/sandstorm-io/sandstorm/wiki/Sandcats-dynamic-DNS"
+  echo "  https://docs.sandstorm.io/en/latest/administering/sandcats/"
   echo ""
   echo "* Recover access to a domain you once registered with sandcats"
   echo ""

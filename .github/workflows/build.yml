@@ -1,14 +1,14 @@
 name: build_and_test
 
-on: [push, pull_request]
+on: [push, pull_request, workflow_dispatch]
 
 env:
   CCACHE_DIR: ${{ github.workspace }}/.ccache"
 jobs:
   build_and_test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: install dependencies
         run: |
             export DEBIAN_FRONTEND=noninteractive
@@ -16,12 +16,12 @@ jobs:
             echo "The github runner seems to have some version of golang already; installing golang-go breaks."
             which go || sudo apt-get install golang-go
 
-            sudo apt-get install -y build-essential libcap-dev xz-utils zip unzip strace curl discount git python zlib1g-dev cmake ccache
+            sudo apt-get install -y build-essential libcap-dev xz-utils zip unzip strace curl discount git python3 zlib1g-dev cmake ccache
       - name: install meteor
         run: |
             curl https://install.meteor.com/ | sh
       - name: cache ccache files
-        uses: actions/cache@v1.1.0
+        uses: actions/cache@v4
         with:
           path: ${{ env.CCACHE_DIR }}
           key: ccache-${{ github.run_number }}
@@ -57,10 +57,12 @@ jobs:
       #    path: ccache-debug.tar.gz
       - name: upload sandstorm tarball
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: sandstorm-0-fast.tar.xz
           path: sandstorm-0-fast.tar.xz
+      - name: typecheck-ts
+        run: make typecheck-ts
       - name: lint
         run: |
           # In addition to making sure the linting step doesn't flag any errors,
@@ -69,22 +71,20 @@ jobs:
           # the constant below.
           make lint | tee lint.log
           num_problems=$(cat lint.log | grep ' problems (0 errors, ' | awk '{print $2}')
-          [ "$num_problems" = 778 ]
+          [ "$num_problems" = 773 ]
       - name: test
         run: |
           set -o pipefail
-          # Currently these tests never pass.
-          # TODO: When they are fixed, remove the || true
-          (make test |& tee testlog.txt; echo "Result: $?") || true
+          (make test |& tee testlog.txt; echo "Result: $?")
       - name: upload test log
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: testlog.txt
           path: testlog.txt
       - name: upload screenshots
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: screenshots
           path: tests/screenshots

@@ -32,14 +32,14 @@ import { $ } from "meteor/jquery";
 
 import { introJs } from "intro.js";
 
-import downloadFile from "/imports/client/download-file.js";
-import { makeAndDownloadBackup } from "/imports/client/backups.ts";
-import { ContactProfiles } from "/imports/client/contacts.js";
-import { isStandalone } from "/imports/client/standalone.js";
-import { GrainView } from "/imports/client/grain/grainview.js";
-import { SandstormDb } from "/imports/sandstorm-db/db.js";
-import { globalDb } from "/imports/db-deprecated.js";
-import { SandstormPowerboxRequest } from "/imports/sandstorm-ui-powerbox/powerbox-client.js";
+import downloadFile from "/imports/client/download-file";
+import { makeAndDownloadBackup } from "/imports/client/backups";
+import { ContactProfiles } from "/imports/client/contacts";
+import { isStandalone } from "/imports/client/standalone";
+import { GrainView } from "/imports/client/grain/grainview";
+import { SandstormDb } from "/imports/sandstorm-db/db";
+import { globalDb } from "/imports/db-deprecated";
+import { SandstormPowerboxRequest } from "/imports/sandstorm-ui-powerbox/powerbox-client";
 
 // Pseudo-collections.
 TokenInfo = new Mongo.Collection("tokenInfo");
@@ -51,9 +51,9 @@ GrainLog = new Mongo.Collection("grainLog");
 
 const promptNewTitle = function (grain) {
   if (grain) {
-    let prompt = "Set new title:";
+    let prompt = TAPi18n.__('grains.grainTitlePopup.prompt');
     if (!grain.isOwner()) {
-      prompt = "Set a new personal title: (does not change the owner's title for this grain)";
+      prompt = TAPi18n.__('grains.grainTitlePopup.promptNotOwner');
     }
 
     const title = window.prompt(prompt, grain.title());
@@ -159,7 +159,7 @@ Template.grainDeleteButton.events({
   "click button": function (event) {
     const activeGrain = globalGrains.getActive();
     const grainId = activeGrain.grainId();
-    let confirmationMessage = "Really move this grain to your trash?";
+    let confirmationMessage = TAPi18n.__("grains.grainDeletePopup.confirmationMessage");
     if (window.confirm(confirmationMessage)) {
       Meteor.call("moveGrainsToTrash", [grainId]);
       globalGrains.remove(grainId, true);
@@ -1587,6 +1587,12 @@ Meteor.startup(function () {
           roleAssignment: Match.Optional(globalDb.roleAssignmentPattern),
           forSharing: Match.Optional(Boolean),
           clipboardButton: Match.Optional(Match.OneOf(undefined, null, "left", "right")),
+          style: Match.Optional({
+            color: Match.Optional(Match.Where(v => {
+              check(v, String);
+              return /^#[0-9a-fA-F]{6}$/.test(v);
+            })),
+          }),
           unauthenticated: Match.Optional(Object),
           // Note: `unauthenticated` will be validated on the server. We just pass it through
           //   here.
@@ -1697,6 +1703,7 @@ Meteor.startup(function () {
             expires: Date.now() + selfDestructDuration,
             host,
             link,
+            style: call.style,
           })
         );
 

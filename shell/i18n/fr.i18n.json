@@ -120,26 +120,6 @@
       "changelog": {
         "title": "Changements récents"
       },
-      "developers": {
-        "title": "Développeurs principaux"
-      },
-      "advisors": {
-        "title": "Conseillers"
-      },
-      "corporate": {
-        "title": "Entreprises sponsors",
-        "explanation": "Ces entreprises ont fortement contribué <a href=\"http://igg.me/at/sandstorm\">à la campagne de financement participatif</a> de Sandstorm."
-      },
-      "individual": {
-        "title": "Principaux sponsors individuels",
-        "explanation": "Ces particuliers ont fortement contribué <a href=\"http://igg.me/at/sandstorm\">à la campagne de financement participatif</a> de Sandstorm."
-      },
-      "backers": {
-        "title": "Soutiens",
-        "explanation": "de <a href=\"http://igg.me/at/sandstorm\">notre campagne Indiegogo &gt;</a>",
-        "anonymous": "et %s de contributeurs anonymes",
-        "loading": "chargement…"
-      },
       "dependencies": {
         "title": "Ressources tierces utilisées",
         "license": "licence",
@@ -147,8 +127,7 @@
       },
       "copyright": {
         "title": "Propriété intellectuelle",
-        "license": "L'implémentation de Sandstorm est protégée par les droits d'auteur de Sandstorm Development Group, Inc. et des contributeurs. Cette implémentation est couverte par la licence Apache License 2.0.",
-        "trademark": "La marque « Sandstorm » et le logo Sandstorm sont des marques commerciales de Sandstorm Development Group, Inc. et ne peuvent être utilisées pour présenter des travaux dérivés ou des services commerciaux sans le consentement écrit de Sandstorm Development Group, Inc."
+        "license": "L'implémentation de Sandstorm est protégée par les droits d'auteur de Sandstorm contributeurs. Cette implémentation est couverte par la licence Apache License 2.0."
       },
       "terms": {
         "license": "Licence",
@@ -686,12 +665,12 @@
             "subtext": "Les utilisateurs ayant une adresse électronique dans ce domaine seront membres de l'organisation de ce serveur."
           },
           "gappsToggle": {
-            "label": "Authentification d'utilisateurs via Google Apps for Work",
+            "label": "Authentification d'utilisateurs via Google Workspace",
             "subtext": "Note : désactivée car l'authentification via Google n'est pas configurée."
           },
           "gappsDomain": {
             "label": "Domaine :",
-            "subtext": "Les utilisateurs disposant d'un compte Google Apps for Work sous ce domaine seront membres de l'organisation de ce serveur."
+            "subtext": "Les utilisateurs disposant d'un compte Google Workspace sous ce domaine seront membres de l'organisation de ce serveur."
           },
           "ldapToggle": {
             "label": "Authentification d'utilisateurs via LDAP",
@@ -1655,12 +1634,12 @@
           "subtext": "Les utilisateurs ayant une adresse électronique dans ce domaine seront membres de l'organisation de ce serveur."
         },
         "gappsToggle": {
-          "label": "Utilisateurs authentifiés par Google Apps for Work",
+          "label": "Utilisateurs authentifiés par Google Workspace",
           "subtext": "Note : désactivé car l'authentification via Google n'est pas configurée."
         },
         "gappsDomain": {
           "label": "Domaine :",
-          "subtext": "Les utilisateurs disposant d'un compte Google Apps for Work sous ce domaine seront membres de l'organisation de ce serveur."
+          "subtext": "Les utilisateurs disposant d'un compte Google Workspace sous ce domaine seront membres de l'organisation de ce serveur."
         },
         "ldapToggle": {
           "label": "Utilisateurs identifiés via LDAP",

@@ -170,6 +170,8 @@ test: sandstorm-$(BUILD)-fast.tar.xz test-app.spk tests/assets/meteor-testapp.sp
 	tests/run-local.sh sandstorm-$(BUILD)-fast.tar.xz test-app.spk
 lint: shell-env
 	cd shell && meteor npm run lint
+typecheck-ts:
+	cd shell && meteor npm run typecheck
 
 installer-test:
 	(cd installer-tests && bash prepare-for-tests.sh && PYTHONUNBUFFERED=yes TERM=xterm SLOW_TEXT_TIMEOUT=120 ~/.local/bin/stodgy-tester --plugin stodgy_tester.plugins.sandstorm_installer_tests --on-vm-start=uninstall_sandstorm --rsync)
@@ -191,7 +193,7 @@ REMOTE_libseccomp=https://github.com/seccomp/libseccomp master
 REMOTE_libsodium=https://github.com/jedisct1/libsodium.git stable
 REMOTE_node-capnp=https://github.com/kentonv/node-capnp.git node10
 REMOTE_boringssl=https://boringssl.googlesource.com/boringssl master
-REMOTE_clang=https://chromium.googlesource.com/chromium/src/tools/clang.git master
+REMOTE_clang=https://chromium.googlesource.com/chromium/src/tools/clang.git main
 
 deps/capnproto/.git:
 	@# Probably user forgot to checkout submodules. Do it for them.

@@ -4,8 +4,8 @@ import { ReactiveVar } from "meteor/reactive-var";
 import { Router } from "meteor/iron:router";
 import { _ } from "meteor/underscore";
 
-import { iconSrcForPackage } from "/imports/sandstorm-identicons/helpers.js";
-import { SandstormDb } from "/imports/sandstorm-db/db.js";
+import { iconSrcForPackage } from "/imports/sandstorm-identicons/helpers";
+import { SandstormDb } from "/imports/sandstorm-db/db";
 
 const latestPackageForAppId = function (db, appId) {
   // Dev apps mask current package version.
@@ -138,11 +138,12 @@ Template.sandstormAppDetails.helpers({
   },
 
   appMarketHost: function() {
-    let host = "https://apps.sandstorm.io/";
+    let host = "https://apps.sandstorm.io";
     const ref = Template.instance().data;
-    const db = ref._db;
+    // Pull the database from our parent context:
+    const db = Template.parentData(1)._db;
     const appMarket = db.collections.settings.findOne({ _id: "appMarketUrl" });
-    if (!appMarket) {
+    if (appMarket) {
       host = appMarket.value;
     }
     return host;
